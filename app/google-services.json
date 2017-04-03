@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "792124499547",
+    "firebase_url": "https://idonor-89c3f.firebaseio.com",
+    "project_id": "idonor-89c3f",
+    "storage_bucket": "idonor-89c3f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792124499547:android:5275b82fc9d6eeca",
+        "android_client_info": {
+          "package_name": "com.lokas.idonor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792124499547-63m6al6hbmven4ps4pr3ra32g2t437mr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5y6jAA-SAX2VBEs9aOLrNh8F9nT29qzE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
