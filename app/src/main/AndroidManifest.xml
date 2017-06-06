@@ -47,7 +47,6 @@ package="com.lokas.idonor">
 
 
 
-
 <application
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
@@ -68,16 +67,12 @@ package="com.lokas.idonor">
         android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
         android:theme="@android:style/Theme.Translucent.NoTitleBar"
         android:label="@string/app_name" />
-    <activity android:name="com.lokas.idonor.MainActivityD" />
     <activity android:name="com.lokas.idonor.MainActivity" />
     <activity android:name="com.lokas.idonor.Register" />
     <!--<activity android:name="lokas.ngotrain.Dashboard" />-->
     <activity android:name="com.lokas.idonor.Dash" />
-    <activity android:name="com.lokas.idonor.CustomerEdit" />
     <activity android:name="com.lokas.idonor.Products" />
-    <activity android:name="com.lokas.idonor.ProductView" />
     <activity android:name="com.lokas.idonor.ProductsShown" />
-    <activity android:name="com.lokas.idonor.ProductDisplay" />
     <activity android:name="com.lokas.idonor.WebDisplay" />
     <activity android:name="com.lokas.idonor.MapShown" />
     <activity android:name="com.lokas.idonor.FBIntegration" />

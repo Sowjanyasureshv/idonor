@@ -2,7 +2,9 @@ package com.lokas.idonor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.SQLException;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -67,7 +69,9 @@ public class BidsCusList extends Fragment {
     ArrayList<String> CUS_name = new ArrayList<String>();
     ArrayList<String> CUS_email = new ArrayList<String>();
     ArrayList<String> CUS_phone = new ArrayList<String>();
-    String prodID;
+    ArrayList<String> CUS_link = new ArrayList<String>();
+
+    String strurl;
     private CoordinatorLayout coordinatorLayout;
     String myJSON;
     private static final String TAG_RESULTS="result";
@@ -86,12 +90,14 @@ public class BidsCusList extends Fragment {
         View Cview = inflater.inflate(R.layout.bids_prodlist, container, false);
 
 
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Bundle b = getArguments();
         final int proID = b.getInt("prodID");
 
 
        // mBundle.getString(prodID);
-Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
 
         myDbHelper = new DataBaseHelper(getActivity());
 
@@ -139,7 +145,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
         manager = new SessionManager();
         String result=manager.getPreferences(getActivity(),"cusID");
         final String cusUID= result.replaceAll("[^a-zA-Z0-9]+","");
-        Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
 
         try {
             Bids_List.clear();
@@ -249,7 +255,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
                 CUS_name.clear();
                 CUS_email.clear();
                 CUS_phone.clear();
-                //ProdSold.clear();
+                CUS_link.clear();
 
                 /*CUSTOMER_LIST = dh
                         .selectList(
@@ -257,7 +263,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
                                         + usercode + "' ORDER BY RLRNAM", null, 8);*/
                 CUS_List = myDbHelper
                         .selectList(
-                                "Select * from customer where cus_userId='"+CusId.get(position)+"'ORDER BY cus_id", null, 12);
+                                "Select * from customer where cus_userId='"+CusId.get(position)+"'ORDER BY cus_id", null, 13);
                 for (Iterator<String> i = CUS_List.iterator(); i.hasNext();) {
                     String rowValue = (String) i.next();
                     String[] parser = rowValue.split("%");
@@ -267,6 +273,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
                     CUS_name.add(parser[2].trim().replace("null", ""));
                     CUS_email.add(parser[3].trim().replace("null", ""));
                     CUS_phone.add(parser[4].trim().replace("null", ""));
+                    CUS_link.add(parser[12].trim().replace("null", ""));
 
 
                     //Toast.makeText(getActivity(), (CharSequence) PRDS_name,Toast.LENGTH_LONG).show();
@@ -293,6 +300,8 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
             str2 = str2.replaceAll("\\[", "").replaceAll("\\]","");
             String str3 = String.valueOf(CUS_id);
             str3 = str3.replaceAll("\\[", "").replaceAll("\\]","");
+             strurl = String.valueOf(CUS_link);
+            strurl = strurl.replaceAll("\\[", "").replaceAll("\\]","");
             //Log.d("Ids", CUS_ids.get(position));
             //new DownloadImageTask(holder.primg).execute("http://lokas.co.in/ngoapp/productImage/"+str1);
             holder.Name.setAllCaps(true);
@@ -332,12 +341,16 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
                 cimg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        /*String url = "http://www.example.com";
+                        String url = strurl;
+                        Log.d("url",url);
+                        if (!url.startsWith("https://") && !url.startsWith("http://")){
+                            url = "http://" + url;
+                        }
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
-                        startActivity(i);*/
-                        Intent wint = new Intent(getActivity(),WebDisplay.class);
-                        startActivity(wint);
+                        startActivity(i);
+                       /* Intent wint = new Intent(getActivity(),WebDisplay.class);
+                        startActivity(wint);*/
                     }
                 });
 
@@ -352,7 +365,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
                 btnaccept.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getActivity(), String.valueOf(CusId)+"as"+ProdUserID,Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getActivity(), String.valueOf(CusId)+"as"+ProdUserID,Toast.LENGTH_LONG).show();
                         getData1(ProdCusId.get(getPosition()),ProdUserID.get(getPosition()),CusId.get(getPosition()));
                     }
                 });
@@ -390,7 +403,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
                         //Log.d("cusIDDD", String.valueOf(CusId));
                         //Log.d("view", String.valueOf(View1));
                         //Toast.makeText(getApplicationContext(),pos,Toast.LENGTH_LONG).show();
-                        Toast.makeText(getActivity(), String.valueOf(CusId),Toast.LENGTH_LONG).show();
+                       // Toast.makeText(getActivity(), String.valueOf(CusId),Toast.LENGTH_LONG).show();
                         //Intent edit = new Intent(getActivity(),CustomerEdit.class);
                         //edit.putExtra("CUSID", String.valueOf(CusIds.get(getPosition())));
                         //Log.d("view11", String.valueOf(CusIds.get(getPosition())));
@@ -424,7 +437,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
             @Override
             protected String doInBackground(String... params) {
                 DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
-                HttpPost httppost = new HttpPost("http://lokas.co.in/ngoapp/product_location_get.php/?id="+cusUID);
+                HttpPost httppost = new HttpPost("http://lokas.in/ngoapp/product_location_get.php/?id="+cusUID);
 
                 // Depends on your web service
                 httppost.setHeader("Content-type", "application/json");
@@ -514,7 +527,7 @@ Toast.makeText(getContext(),"dfdf"+proID,Toast.LENGTH_LONG).show();
             protected String doInBackground(String... params) {
                 DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
                 Log.d("pass value",prid+"as"+rcusid);
-                HttpPost httppost = new HttpPost("http://lokas.co.in/ngoapp/donor_accept.php/?id="+pcusid+"&id1="+prid+"&id2="+rcusid);
+                HttpPost httppost = new HttpPost("http://lokas.in/ngoapp/donor_accept.php/?id="+pcusid+"&id1="+prid+"&id2="+rcusid);
 
                 // Depends on your web service
                 httppost.setHeader("Content-type", "application/json");

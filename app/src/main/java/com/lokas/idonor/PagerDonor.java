@@ -30,8 +30,8 @@ public class PagerDonor extends FragmentStatePagerAdapter {
             case 1:
                 ProductCloseDonor donor2 = new ProductCloseDonor();
                 return donor2;
-            /*case 2:
-                Tab3 tab3 = new Tab3();
+            case 2:
+                /*Tab3 tab3 = new Tab3();
                 return tab3;*/
             default:
                 return null;

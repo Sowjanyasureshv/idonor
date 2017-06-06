@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">iDonor</string>
 
-    <string name="app_id">870742793027934</string>
+    <!--<string name="app_id">870742793027934</string>-->
+    <string name="app_id">233363060474193</string>
 
     <string name="opendrawer">Open</string>
     <string name="closedrawer">Close</string>
@@ -25,10 +26,14 @@
     <string name="ur_bids">Your Bids</string>
     <string name="donor">Your Products</string>
     <string name="logout">Logout</string>
+    <string name="aboutus">About Us</string>
 
     <string name="takepic">Upload Product</string>
     <string name="opengallery">Upload Product</string>
     <string name="pickgallery">p Product</string>
+
+    <string name="abt_first">In this App was created with the thought of spreading the message of Happy giving.</string>
+    <string name="abt_second">It is designed to cater to the NGO community who have specific needs at a Various juncture and they are unable to connect themselves to a sponsor who on the other side is unable to find a genuine need for the receiving his donation. iGiver will act as the bridge between a donor and the recipient.Where donor identity will not be revealed unless he shortlists the recipient based on his criteria.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

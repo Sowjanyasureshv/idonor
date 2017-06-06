@@ -3,8 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@mipmap/splashbg"
     android:orientation="vertical"
-    tools:context="lokas.ngotrain.FBIntegration">
+    tools:context="com.lokas.idonor.FBIntegration">
+
+    <RelativeLayout android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#ff8f20"
+        android:id="@+id/rlayout1">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarm"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"/>
+    </RelativeLayout>
 
     <com.facebook.login.widget.ProfilePictureView
         android:id="@+id/picture"

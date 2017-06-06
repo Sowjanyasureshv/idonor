@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -211,7 +210,7 @@ public class ProductCloseDonor extends Fragment {
 
 
 
-            url_select = "http://lokas.co.in/ngoapp/product_bids_get.php";
+            url_select = "http://lokas.in/ngoapp/product_bids_get.php";
 
 
 
@@ -423,7 +422,7 @@ public class ProductCloseDonor extends Fragment {
             manager = new SessionManager();
             String result=manager.getPreferences(getActivity(),"cusID");
             final String cusUID= result.replaceAll("[^a-zA-Z0-9]+","");
-            Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
+           // Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
 
             try {
                 Bids_List.clear();
@@ -571,7 +570,7 @@ public class ProductCloseDonor extends Fragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder  {
             TextView Pname, Pdesc;
-            ImageView primg;
+            ImageView primg,pFB;
 
 
             public ViewHolder(final View View1) {
@@ -580,6 +579,9 @@ public class ProductCloseDonor extends Fragment {
                 //Pdesc =  (TextView) View1.findViewById(R.id.openprd_desc);
 
                 primg = (ImageView) View1.findViewById(R.id.openprd_img);
+                pFB = (ImageView) View1.findViewById(R.id.openprd_stat);
+
+                pFB.setVisibility(View.GONE);
 
 
                 View1.setOnClickListener(new View.OnClickListener() {
@@ -587,7 +589,7 @@ public class ProductCloseDonor extends Fragment {
                     public void onClick(View v) {
 
 
-                        Toast.makeText(getActivity(), String.valueOf(BidId.get(getPosition())), Toast.LENGTH_LONG).show();
+                       // Toast.makeText(getActivity(), String.valueOf(BidId.get(getPosition())), Toast.LENGTH_LONG).show();
                         /*Intent Cusprod = new Intent(getActivity(),BidsCusList.class);
                         Cusprod.putExtra("ProdId",String.valueOf(ProdUserID.get(getPosition())));
                         startActivity(Cusprod);*/

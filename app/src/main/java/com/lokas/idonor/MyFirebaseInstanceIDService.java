@@ -68,7 +68,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
                 try{
                     HttpClient httpClient = new DefaultHttpClient();
-                    HttpPost httpPost = new HttpPost("http://lokas.co.in/ngoapp/gcm_insert.php");
+                    HttpPost httpPost = new HttpPost("http://lokas.in/ngoapp/gcm_insert.php");
                     httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                     HttpResponse response = httpClient.execute(httpPost);
                     HttpEntity entity = response.getEntity();

@@ -98,27 +98,14 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:lines="8"
+                    android:gravity="top|left"
+                    android:scrollbars="vertical"
                     android:hint="Product Description"
                     android:inputType="textPersonName" />
             </android.support.design.widget.TextInputLayout>
 
-            <!--<EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/pro_title"
-                android:layout_below="@+id/selectImage"
-                android:layout_toRightOf="@+id/selectImage"
-                android:layout_toEndOf="@+id/selectImage"
-                android:layout_marginTop="28dp" />
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/pro_desc"
-                android:layout_below="@+id/pro_title"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="31dp" />-->
-
+<!--
             <Spinner
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -130,15 +117,6 @@
                 android:layout_marginLeft="5dip"
                 android:layout_marginRight="5dip"
                 android:text="@string/select_category"/>
-
-           <!-- <Spinner
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/prod_spinner"
-                android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/pro_desc"
-                android:layout_toEndOf="@+id/pro_desc" />-->
-
             <Spinner
                 android:id="@+id/prod_spinner"
                 android:layout_height="wrap_content"
@@ -149,13 +127,15 @@
                 android:drawSelectorOnTop="true"
                 android:prompt="@string/select_category"
                 android:layout_below="@+id/linearLayout_gender_btns"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true" />-->
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="40dp"
                 android:text="Upload"
+                android:background="@color/colorPrimary"
+                android:textColor="@color/colorTextStyle"
                 android:id="@+id/uploadImage"
                 android:layout_gravity="center_horizontal" />
         </LinearLayout>

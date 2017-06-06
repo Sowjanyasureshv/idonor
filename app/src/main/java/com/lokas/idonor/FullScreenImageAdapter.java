@@ -71,7 +71,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
 
        // Bitmap bitmap = BitmapFactory.decodeResource(context.getApplicationContext().getResources(),id);
         //imgDisplay.setImageBitmap(bitmap);
-        Picasso.with(context).load("http://lokas.co.in/ngoapp/productImage/"+drawName).into(imgDisplay);
+        Picasso.with(context).load("http://lokas.in/ngoapp/productImage/"+drawName).into(imgDisplay);
 
          /*readMore.setOnClickListener(new View.OnClickListener() {
             @Override

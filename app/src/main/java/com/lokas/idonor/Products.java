@@ -163,7 +163,7 @@ public class Products extends AppCompatActivity implements ObservableScrollViewC
 
         //Toast.makeText(getApplicationContext(),"getCusID"+Pimg,Toast.LENGTH_LONG).show();
         Toast.makeText(getApplicationContext(),"getCusID"+Cid,Toast.LENGTH_LONG).show();
-        new DownloadImageTask(pImg).execute("http://lokas.co.in/ngoapp/productImage/" + Pimg);
+        new DownloadImageTask(pImg).execute("http://lokas.in/ngoapp/productImage/" + Pimg);
     }
 
     @Override
@@ -330,7 +330,7 @@ public class Products extends AppCompatActivity implements ObservableScrollViewC
             @Override
             protected String doInBackground(String... params) {
                 DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
-                HttpPost httppost = new HttpPost("http://lokas.co.in/ngoapp/product_location_get.php/?id="+cusUID);
+                HttpPost httppost = new HttpPost("http://lokas.in/ngoapp/product_location_get.php/?id="+cusUID);
 
                 // Depends on your web service
                 httppost.setHeader("Content-type", "application/json");

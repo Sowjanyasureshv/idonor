@@ -25,7 +25,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class Dash extends AppCompatActivity {
         String status=manager.getPreferences(Dash.this,"cusID");
         Log.d("status", status);
         final String cusUID= status.replaceAll("[^a-zA-Z0-9]+","");
-        Toast.makeText(getApplicationContext(), cusUID, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), cusUID+"test", Toast.LENGTH_LONG).show();
 
 
 
@@ -118,8 +117,8 @@ public class Dash extends AppCompatActivity {
                                         + usercode + "' ORDER BY RLRNAM", null, 8);*/
             C_List = myDbHelper
                     .selectList(
-                            "Select cus_id,cus_userId,cus_name,cus_email,cus_phone,cus_pwd,cus_cpwd,cus_role,crtd_date,modi_date,status,flag from customer" +
-                                    " where cus_userId='"+cusUID+"'ORDER BY cus_id", null, 12);
+                            "Select cus_id,cus_userId,cus_name,cus_email,cus_phone,cus_pwd,cus_cpwd,cus_role,crtd_date,modi_date,status,flag,ngo_link from customer" +
+                                    " where cus_userId='"+cusUID+"'ORDER BY cus_id", null, 13);
             Log.d("va2", String.valueOf(C_List));
             for (Iterator<String> i = C_List.iterator(); i.hasNext();) {
                 String rowValue = (String) i.next();
@@ -198,11 +197,19 @@ public class Dash extends AppCompatActivity {
         final NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         final ImageView avatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.avatar);
         final String finalStrC = strC;
-        if(finalStrC.equals("1")) {
+        /*if(finalStrC.equals("1")) {
             navigationView.getMenu().getItem(2).setVisible(false);
             navigationView.getMenu().getItem(1).setVisible(false);
             navigationView.getMenu().getItem(5).setVisible(false);
+            navigationView.getMenu().getItem(6).setVisible(false);
         }else {
+            navigationView.getMenu().getItem(0).setVisible(false);
+            navigationView.getMenu().getItem(1).setVisible(false);
+            navigationView.getMenu().getItem(4).setVisible(false);
+            navigationView.getMenu().getItem(6).setVisible(false);
+        }
+*/
+        if(finalStrC.equals("0")) {
             navigationView.getMenu().getItem(0).setVisible(false);
             navigationView.getMenu().getItem(1).setVisible(false);
             navigationView.getMenu().getItem(4).setVisible(false);
@@ -241,6 +248,8 @@ public class Dash extends AppCompatActivity {
                         displayView(6);
                     }else if(menuItem.getTitle().equals("Logout")) {
                         displayView(3);
+                    }else if(menuItem.getTitle().equals("About Us")) {
+                        displayView(7);
                     }
                 /*Intent intent = getIntent();
 
@@ -296,7 +305,7 @@ public class Dash extends AppCompatActivity {
                 {
                     displayView(5);
                 }
-                Toast.makeText(this, "exiting", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "exiting", Toast.LENGTH_LONG).show();
             }
 
         }
@@ -406,7 +415,7 @@ public class Dash extends AppCompatActivity {
         Fragment fragment = null;
         switch (position) {
             case 0:
-                fragment = new Fragmentone();
+               /* fragment = new Fragmentone();
                 if (fragment != null) {
 
 
@@ -416,11 +425,11 @@ public class Dash extends AppCompatActivity {
                     t.replace(R.id.frame_container, fragment);
                     t.commit();
 
-                }
+                }*/
                 break;
 
             case 1:
-                fragment = new FragmentTwo();
+               /*fragment = new FragmentTwo();
                 if (fragment != null) {
 
                     Bundle args = new Bundle();
@@ -429,7 +438,7 @@ public class Dash extends AppCompatActivity {
                     t.replace(R.id.frame_container, fragment);
                     t.commit();
 
-                }
+                }*/
                 break;
 
             case 2:
@@ -465,7 +474,19 @@ public class Dash extends AppCompatActivity {
                 }
                 break;
             case 5:
-                fragment = new ProductBids();
+                /*fragment = new ProductBids();
+                if (fragment != null) {
+
+                    Bundle args = new Bundle();
+                    fragment.setArguments(args);
+                    FragmentTransaction t = getSupportFragmentManager().beginTransaction();
+                    t.replace(R.id.frame_container, fragment);
+                    t.commit();
+
+                }*/
+                break;
+            case 6:
+                fragment = new ProductDonor();
                 if (fragment != null) {
 
                     Bundle args = new Bundle();
@@ -476,8 +497,8 @@ public class Dash extends AppCompatActivity {
 
                 }
                 break;
-            case 6:
-                fragment = new ProductDonor();
+            case 7:
+                fragment = new AboutUs();
                 if (fragment != null) {
 
                     Bundle args = new Bundle();

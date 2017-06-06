@@ -5,8 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.SQLException;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.ShareDialog;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpEntity;
@@ -63,18 +65,19 @@ public class ProductOpenDonor extends Fragment {
     MyAsyncTaskOBids  MYOB = null;
     DataBaseHelper myDbHelper;
     private String cusUID;
+    ShareDialog shareDialog;
 
     ArrayList<String> Bids_List = new ArrayList<String>();
     ArrayList<String> BidId = new ArrayList<String>();
     ArrayList<String> CusId = new ArrayList<String>();
-   // ArrayList<String> CusIds = new ArrayList<String>();
+    // ArrayList<String> CusIds = new ArrayList<String>();
     ArrayList<String> ProdCusId = new ArrayList<String>();
     ArrayList<String> ProdUserID = new ArrayList<String>();
     ArrayList<String> CategId = new ArrayList<String>();
-   // ArrayList<String> CreatedDate = new ArrayList<String>();
-   // ArrayList<String> ModiDate = new ArrayList<String>();
-   // ArrayList<String> Status = new ArrayList<String>();
-   // ArrayList<String> Flag = new ArrayList<String>();
+    // ArrayList<String> CreatedDate = new ArrayList<String>();
+    // ArrayList<String> ModiDate = new ArrayList<String>();
+    // ArrayList<String> Status = new ArrayList<String>();
+    // ArrayList<String> Flag = new ArrayList<String>();
     ArrayList<String> ProdID = new ArrayList<String>();
     ArrayList<String> ProdSold = new ArrayList<String>();
     ArrayList<String> ProdAward = new ArrayList<String>();
@@ -99,6 +102,7 @@ public class ProductOpenDonor extends Fragment {
     ArrayList<String> ModiDate = new ArrayList<String>();
     ArrayList<String> Status = new ArrayList<String>();
     ArrayList<String> Flag = new ArrayList<String>();
+    ArrayList<String> BidsOpt = new ArrayList<String>();
 
     ArrayList<String> PRO_BIDS_LIST = new ArrayList<String>();
     ArrayList<String> PRO_BID_ID = new ArrayList<String>();
@@ -114,8 +118,6 @@ public class ProductOpenDonor extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_product_open_donor, container, false);
-
         /*dh = new DataHelper1(getActivity());
 
         try {
@@ -126,7 +128,7 @@ public class ProductOpenDonor extends Fragment {
 
         da = new DataAccess();*/
 
-
+        FacebookSdk.sdkInitialize(getActivity());
         myDbHelper = new DataBaseHelper(getActivity());
 
         try {
@@ -152,10 +154,12 @@ public class ProductOpenDonor extends Fragment {
         manager = new SessionManager();
         String result=manager.getPreferences(getActivity(),"cusID");
         cusUID= result.replaceAll("[^a-zA-Z0-9]+","");
-        Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
+        shareDialog = new ShareDialog(getActivity());
 
+        View view = inflater.inflate(R.layout.fragment_product_open_donor, container, false);
 
-        r1 = (RecyclerView) view.findViewById(R.id.listView1);
+        r1 = (RecyclerView) view.findViewById(R.id.opendnr);
 
         MY= new MyAsyncTask1();
         MY.execute();
@@ -198,7 +202,7 @@ public class ProductOpenDonor extends Fragment {
 
 
 
-            url_select = "http://lokas.co.in/ngoapp/product_user_get.php";
+            url_select = "http://lokas.in/ngoapp/product_user_get.php";
 
 
 
@@ -374,6 +378,7 @@ public class ProductOpenDonor extends Fragment {
                     String PUMODIDATE = jObject.getString("dndt");
                     String PUSTATUS = jObject.getString("status");
                     String PUFLAG = jObject.getString("flag");
+                    String PUBIDS = jObject.getString("bids_opt");
 
 
 
@@ -388,7 +393,7 @@ public class ProductOpenDonor extends Fragment {
                     myDbHelper.ExecStatement(QUERY1);*/
                     myDbHelper.ExecStatement("DELETE FROM product_user WHERE pro_user_id='" + PUID + "'");
 
-                    QUERY="INSERT INTO product_user(pro_user_id,cus_id,pro_id,cat_id,pro_user_title,pro_user_desc,pro_user_img,crdt,dndt,status,flag) " + "VALUES ('"+PUID+"','"+CUSID+"','"+PID+"','"+CATID+"','"+PUTITLE+"','"+PUDESC+"','"+PUIMG+"','"+PUCRTDDATE+"','"+PUMODIDATE+"','"+PUSTATUS+"','"+PUFLAG+"')";
+                    QUERY="INSERT INTO product_user(pro_user_id,cus_id,pro_id,cat_id,pro_user_title,pro_user_desc,pro_user_img,crdt,dndt,status,flag,bids_opt) " + "VALUES ('"+PUID+"','"+CUSID+"','"+PID+"','"+CATID+"','"+PUTITLE+"','"+PUDESC+"','"+PUIMG+"','"+PUCRTDDATE+"','"+PUMODIDATE+"','"+PUSTATUS+"','"+PUFLAG+"','"+PUBIDS+"')";
 
                     myDbHelper.ExecStatement(QUERY);
 
@@ -440,21 +445,21 @@ public class ProductOpenDonor extends Fragment {
                 ModiDate.clear();
                 Status.clear();
                 Flag.clear();
+                BidsOpt.clear();
 
                 /*CUSTOMER_LIST = dh
                         .selectList(
                                 "Select cus_id,cus_name,cus_email,cus_phone,crtd_date,modi_date,status,flag from customer WHERE RLCRBY='"
                                         + usercode + "' ORDER BY RLRNAM", null, 8);*/
-                PRODUCT_LIST = myDbHelper
+               PRODUCT_LIST = myDbHelper
                         .selectList(
-                                "Select * from product_user where  cus_id='"+cusUID+"' and flag = 1 ORDER BY pro_user_id DESC", null, 11);
+                                "Select * from product_user where  cus_id='"+cusUID+"' and flag = 1 ORDER BY pro_user_id DESC", null, 12);
                 for (Iterator<String> i = PRODUCT_LIST.iterator(); i.hasNext();) {
                     String rowValue = (String) i.next();
                     String[] parser = rowValue.split("%");
                     ProdLISTID.add(parser[0].trim().replace("null", ""));
                     CusIds.add(parser[1].trim().replace("null", ""));
                     ProdId.add(parser[2].trim().replace("null", ""));
-                    // AUDIT2.add(parser[1].trim().replace("null", ""));
                     CatID.add(parser[3].trim().replace("null", ""));
                     ProdTitle.add(parser[4].trim().replace("null", ""));
                     ProdDesc.add(parser[5].trim().replace("null", ""));
@@ -463,6 +468,7 @@ public class ProductOpenDonor extends Fragment {
                     ModiDate.add(parser[8].trim().replace("null", ""));
                     Status.add(parser[9].trim().replace("null", ""));
                     Flag.add(parser[10].trim().replace("null", ""));
+                    BidsOpt.add(parser[11].trim().replace("null", ""));
 
                     /*String Date ="";
                     if(parser[7].trim().replace("null", "").length()==10)
@@ -478,6 +484,7 @@ public class ProductOpenDonor extends Fragment {
 
                 myDbHelper.Toastinfo(getActivity(), error);
             }
+
 
             progressDialog.dismiss();
         }
@@ -516,7 +523,7 @@ public class ProductOpenDonor extends Fragment {
 
 
 
-            url_select = "http://lokas.co.in/ngoapp/product_bids_get.php";
+            url_select = "http://lokas.in/ngoapp/product_bids_get.php";
 
 
 
@@ -710,6 +717,7 @@ public class ProductOpenDonor extends Fragment {
                 Log.e("JSONException", "Error: " + e.toString());
             } // catch (JSONException e)
 
+
             progressDialog.dismiss();
         }
 
@@ -751,7 +759,16 @@ public class ProductOpenDonor extends Fragment {
             ///String prDetails = String.valueOf(myDbHelper.selectList("Select * from product_user where pro_user_id='"+ProdUserID.get(position)+"'ORDER BY pro_user_id", null, 11));
             // Log.d("Products",prDetails);
             Log.d("id1", String.valueOf(cusUID));
+            /*String BIDIDD=myDbHelper.selectViewName("SELECT pro_user_id FROM product_bids where pro_cus_id='"+cusUID+"' and pro_user_id='"+ProdLISTID.get(position)+"'", null);
+            if(BIDIDD==null)
+            {
+                BIDIDD="";
+            }
+            if(BIDIDD != ""){
+                holder.prdbidimg.setImageDrawable(getResources().getDrawable(R.drawable.bidsopened));
+            }
 
+            Log.d("BidIdsss", String.valueOf(BIDIDD));*/
             try {
                 PRO_BIDS_LIST.clear();
                 PRO_BID_ID.clear();
@@ -767,8 +784,12 @@ public class ProductOpenDonor extends Fragment {
                     PRO_BID_ID.add(parser[0].trim().replace("null", ""));
                     PROCUSID.add(parser[1].trim().replace("null", ""));
                     PROUSERID.add(parser[3].trim().replace("null", ""));
-
-
+                    /*Log.d("prouserid", String.valueOf(PROUSERID));
+                    if(String.valueOf(PROUSERID) !=""){
+                        Log.d("prouserid1", String.valueOf(PROUSERID));
+                        holder.Pname.setText(ProdTitle.get(position));
+                        //holder.prdbidimg.setImageDrawable(getResources().getDrawable(R.drawable.bidsopened));
+                    }*/
                     //Toast.makeText(getActivity(), (CharSequence) PRDS_name,Toast.LENGTH_LONG).show();
 
 
@@ -779,68 +800,79 @@ public class ProductOpenDonor extends Fragment {
                 myDbHelper.Toastinfo(getActivity(), error);
             }
 
+            /*String strbidOpen = String.valueOf(PROUSERID);
+            strbidOpen = strbidOpen.replaceAll("\\[", "").replaceAll("\\]","");
+            if(strbidOpen != ""){
+                Log.d("detopen", strbidOpen);
+                if(ProdTitle.get(position) == strbidOpen){
+                    holder.Pname.setAllCaps(true);
+                    holder.Pname.setText(ProdTitle.get(position));
+                }
 
-            String BIDO=myDbHelper.selectViewName("SELECT pro_user_id FROM product_bids  WHERE pro_user_id='" + ProdLISTID.get(position) + "'", null);
-            if(BIDO==null)
-            {
-                BIDO="";
-
-            }
-
-           /* String str = String.valueOf(PRDS_name);
-            str = str.replaceAll("\\[", "").replaceAll("\\]","");
-            String str1 = String.valueOf(PRDS_img);
-            str1 = str1.replaceAll("\\[", "").replaceAll("\\]","");
-            String str2 = String.valueOf(PRDS_desc);
-            str2 = str2.replaceAll("\\[", "").replaceAll("\\]","");
-            Log.d("det", str1);*/
-            Picasso.with(getActivity()).load("http://lokas.co.in/ngoapp/productImage/"+ProdImg.get(position)).placeholder(R.drawable.placeholderone).error(R.drawable.placeholderone).into(holder.primg);
-            //new DownloadImageTask(holder.primg).execute("http://lokas.co.in/ngoapp/productImage/"+str1);
-            holder.Pname.setAllCaps(true);
-            holder.Pname.setText(ProdTitle.get(position));
-            if(BIDO=="") {
-               // holder.Pstat.setText("No");
-                //holder.prdbidimg.setImageDrawable(getResources().getDrawable(R.mipmap.closed));
-            }else{
-                //holder.Pstat.setText("Yes");
-                holder.prdbidimg.setImageDrawable(getResources().getDrawable(R.drawable.bidsopened));
-            }
-            //holder.Pdesc.setText(str2);
-            // holder.relation.setAllCaps(true);
-
-            //holder.BidId.setText(BidId.get(position));
-            //holder.pname.setText(str);
-
-            // holder.bg.setText( BG);
-            //holder.DOB.setText("Date of Birth : " + dateofbirth.get(position));
-
-            Log.d("Ids", String.valueOf(CusId));
-           /* if(ProdUserID.get(position).trim().equals(""))
-            {
-                holder.emlay.setVisibility(View.GONE);
-            }
-            else
-            {
-                holder.emlay.setVisibility(View.VISIBLE);
             }*/
 
-            Log.d("Bidid1",String.valueOf(PRO_BID_ID));
+            Picasso.with(getActivity()).load("http://lokas.in/ngoapp/productImage/"+ProdImg.get(position)).placeholder(R.drawable.placeholderone).error(R.drawable.placeholderone).into(holder.primg);
+
+            holder.Pname.setAllCaps(true);
+            holder.Pname.setText(ProdTitle.get(position));
+            Picasso.with(getActivity()).load("http://lokas.in/ngoapp/productImage/open/"+BidsOpt.get(position)).placeholder(R.drawable.placeholderone).into(holder.prdbidimg);
+            /*Log.d("BGOpen", String.valueOf(BidsOpt.get(position)));
+            if(BidsOpt.get(position).equalsIgnoreCase("1")){
+               holder.prdbidimg.setImageDrawable(getResources().getDrawable(R.drawable.bidsopened));
+
+            }*/
+
+            /*String BGOpen=myDbHelper.selectViewName("Select pro_user_id from product_bids where pro_cus_id='"+cusUID+"' and pro_user_id='"+ProdLISTID.get(position)+"'", null);
+            if(BGOpen==null)
+            {
+                BGOpen="";
+            }
+            Log.d("BGOpen", String.valueOf(BGOpen));
+            if(String.valueOf(BGOpen) !=""){
+                Log.d("BGOpen1", String.valueOf(BGOpen));
+                Log.d("BGOpen2", ProdLISTID.get(position));
+                if(ProdLISTID.get(position).equalsIgnoreCase(String.valueOf(BGOpen))) {
+                    Log.d("BGOpen3", String.valueOf(BGOpen));
+                    holder.Pname.setAllCaps(true);
+                    holder.Pname.setText(ProdTitle.get(position));
+                }
+                *//*if(ProdLISTID.get(position) == String.valueOf(BGOpen)){
+                    Log.d("BGOpen4", String.valueOf(BGOpen));
+                    holder.Pname.setAllCaps(true);
+                    holder.Pname.setText(ProdTitle.get(position));
+                }*//*
+            }*/
+
         }
 
 
         public class ViewHolder extends RecyclerView.ViewHolder  {
-            TextView Pname, Pstat;
-            ImageView primg,prdbidimg;
+            TextView Pname;
+            ImageView primg,prdbidimg,Pstat;
 
 
             public ViewHolder(final View View1) {
                 super(View1);
                 Pname = (TextView) View1.findViewById(R.id.openprd_name);
-                Pstat =  (TextView) View1.findViewById(R.id.openprd_stat);
+                Pstat =  (ImageView) View1.findViewById(R.id.openprd_stat);
                 prdbidimg = (ImageView) View1.findViewById(R.id.openprd_bidimg);
 
                 primg = (ImageView) View1.findViewById(R.id.openprd_img);
 
+
+                Pstat.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Toast.makeText(getActivity(), "test fb", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getActivity(), ProdImg.get(getPosition()), Toast.LENGTH_LONG).show();
+
+                        ShareLinkContent linkContent = new ShareLinkContent.Builder().setContentTitle("Test").setContentDescription("Test Test")
+                                .setContentUrl(Uri.parse("https://play.google.com/store/apps/details?id=com.lokas.idonor&hl=en"))
+                                .setImageUrl(Uri.parse("http://lokas.in/ngoapp/productImage/"+ProdImg.get(getPosition())))
+                                .build();
+                        shareDialog.show(linkContent);
+                    }
+                });
 
                 View1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -878,7 +910,7 @@ public class ProductOpenDonor extends Fragment {
                         /*Intent Cusprod = new Intent(getActivity(),BidsCusList.class);
                         Cusprod.putExtra("ProdId",String.valueOf(ProdUserID.get(getPosition())));
                         startActivity(Cusprod);*/
-                       //if(ProdLISTID.get(getPosition()) != "") {
+                        //if(ProdLISTID.get(getPosition()) != "") {
                             /*BidsCusList newFragment = new BidsCusList();
                             Bundle args = new Bundle();
                             args.putInt("prodID", Integer.parseInt(String.valueOf(ProdLISTID.get(getPosition()))));
@@ -893,10 +925,10 @@ public class ProductOpenDonor extends Fragment {
 
                             // Commit the transaction
                             transaction.commit();*/
-                         //   Toast.makeText(getActivity(), "No Bids Are Entered1", Toast.LENGTH_LONG).show();
+                        //   Toast.makeText(getActivity(), "No Bids Are Entered1", Toast.LENGTH_LONG).show();
                         //}else{
 
-                       // }*/
+                        // }*/
 
                     }
                 });
@@ -913,36 +945,5 @@ public class ProductOpenDonor extends Fragment {
         }
     }
 
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-
-
-            return mIcon11;
-
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-
-        }
-    }
 
 }

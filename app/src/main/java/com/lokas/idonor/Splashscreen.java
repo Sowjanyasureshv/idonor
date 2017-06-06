@@ -73,6 +73,7 @@ public class Splashscreen extends Activity {
     ArrayList<String> ModiDate = new ArrayList<String>();
     ArrayList<String> Status = new ArrayList<String>();
     ArrayList<String> Flag = new ArrayList<String>();
+    ArrayList<String> NGOLink = new ArrayList<String>();
 
 
     ArrayList<String> CAT_List = new ArrayList<String>();
@@ -126,6 +127,7 @@ public class Splashscreen extends Activity {
         MYC.execute();
         MYP= new MyAsyncTask3();
         MYP.execute();
+
         /*imageView = (ImageView) findViewById(R.id.imageView1);
         imageView.getBackground().setAlpha(120);
         //Picasso.with(getApplicationContext()).load("http://lokas.co.in/gcm/img/loadgif.gif").placeholder(R.drawable.load).into(imageView);
@@ -204,17 +206,21 @@ public class Splashscreen extends Activity {
 
         Log.d("Android","Android ID : "+android_id);*/
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+       /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             int hasLocationPermission = getApplicationContext().checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
-            Log.d(TAG, "location permission: " + hasLocationPermission); // 0
+            Log.d(TAG, "lp: " + hasLocationPermission); // 0
 
             if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(Splashscreen.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                Log.d(TAG, "lp1: " + hasLocationPermission);
+            }else{
+                Log.d(TAG, "lp2: " + hasLocationPermission);
             }
-            hasLocationPermission = Splashscreen.this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
-            Log.d(TAG, "location permission1: " + hasLocationPermission); // still 0
+            //hasLocationPermission = Splashscreen.this.checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
+            //Log.d(TAG, "location permission1: " + hasLocationPermission); // still 0
 
-        }
+
+        }*/
 
 
     }
@@ -314,7 +320,7 @@ public class Splashscreen extends Activity {
 
 
 
-            url_select = "http://lokas.co.in/ngoapp/customer_get.php";
+            url_select = "http://lokas.in/ngoapp/customer_get.php";
 
 
 
@@ -478,6 +484,7 @@ public class Splashscreen extends Activity {
                     String CICUSMODIIDATE = jObject.getString("modi_date");
                     String CICUSSTATUS = jObject.getString("status");
                     String CICUSFLAG = jObject.getString("flag");
+                    String CICUSNGOLINK = jObject.getString("ngo_link");
 
 
 
@@ -487,8 +494,8 @@ public class Splashscreen extends Activity {
 
                     myDbHelper.ExecStatement("DELETE FROM customer WHERE cus_id='" + CICUSID + "'");
 
-                    QUERY="INSERT INTO customer (cus_id,cus_userId,cus_name,cus_email,cus_phone,cus_pwd,cus_cpwd,cus_role,crtd_date,modi_date,status,flag) " + "VALUES " +
-                            "('"+CICUSID+"','"+CICUSUSERID+"','"+CICUSNAME+"','"+CICUSEMAIL+"','"+CICUSPHONE+"','"+CICUSPWD+"','"+CICUSCPWD+"','"+CICUSROLE+"','"+CICUSCRTDDATE+"','"+CICUSMODIIDATE+"','"+CICUSSTATUS+"','"+CICUSFLAG+"')";
+                    QUERY="INSERT INTO customer (cus_id,cus_userId,cus_name,cus_email,cus_phone,cus_pwd,cus_cpwd,cus_role,crtd_date,modi_date,status,flag,ngo_link) " + "VALUES " +
+                            "('"+CICUSID+"','"+CICUSUSERID+"','"+CICUSNAME+"','"+CICUSEMAIL+"','"+CICUSPHONE+"','"+CICUSPWD+"','"+CICUSCPWD+"','"+CICUSROLE+"','"+CICUSCRTDDATE+"','"+CICUSMODIIDATE+"','"+CICUSSTATUS+"','"+CICUSFLAG+"','"+CICUSNGOLINK+"')";
                     myDbHelper.ExecStatement(QUERY);
 
 
@@ -529,6 +536,7 @@ public class Splashscreen extends Activity {
                 ModiDate.clear();
                 Status.clear();
                 Flag.clear();
+                NGOLink.clear();
 
                 /*CUSTOMER_LIST = dh
                         .selectList(
@@ -536,7 +544,7 @@ public class Splashscreen extends Activity {
                                         + usercode + "' ORDER BY RLRNAM", null, 8);*/
                 CUSTOMER_LIST = myDbHelper
                         .selectList(
-                                "Select * from customer ORDER BY cus_id", null, 12);
+                                "Select * from customer ORDER BY cus_id", null, 13);
                 for (Iterator<String> i = CUSTOMER_LIST.iterator(); i.hasNext();) {
                     String rowValue = (String) i.next();
                     String[] parser = rowValue.split("%");
@@ -554,6 +562,7 @@ public class Splashscreen extends Activity {
                     ModiDate.add(parser[9].trim().replace("null", ""));
                     Status.add(parser[10].trim().replace("null", ""));
                     Flag.add(parser[11].trim().replace("null", ""));
+                    NGOLink.add(parser[12].trim().replace("null", ""));
 
                     /*String Date ="";
                     if(parser[7].trim().replace("null", "").length()==10)
@@ -610,7 +619,7 @@ public class Splashscreen extends Activity {
 
 
 
-            url_select = "http://lokas.co.in/ngoapp/category_get.php";
+            url_select = "http://lokas.in/ngoapp/category_get.php";
 
 
 
@@ -838,7 +847,7 @@ public class Splashscreen extends Activity {
 
 
 
-            url_select = "http://lokas.co.in/ngoapp/product_get.php";
+            url_select = "http://lokas.in/ngoapp/product_get.php";
 
 
 

@@ -29,6 +29,11 @@
             android:icon="@drawable/products"
             android:title="@string/donor" />
         <item
+            android:id="@+id/navigation_about"
+            android:checked="true"
+            android:icon="@drawable/about"
+            android:title="@string/aboutus" />
+        <item
             android:id="@+id/navigation_item_log"
             android:icon="@drawable/logout"
             android:title="@string/logout" />

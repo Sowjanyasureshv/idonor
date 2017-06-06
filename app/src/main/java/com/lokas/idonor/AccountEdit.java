@@ -4,6 +4,7 @@ package com.lokas.idonor;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.SQLException;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -75,6 +76,8 @@ public class AccountEdit extends Fragment {
         View view = inflater.inflate(R.layout.fragment_account_edit, container, false);
 
         (getActivity()).setTitle("Edit Account");
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         myDbHelper = new DataBaseHelper(getActivity());
 
         try {
@@ -109,7 +112,7 @@ public class AccountEdit extends Fragment {
 
         String result=manager.getPreferences(getActivity(),"cusID");
         final String cusUID= result.replaceAll("[^a-zA-Z0-9]+","");
-        Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
         //get data of customer
         getCusData(cusUID);
 
@@ -121,7 +124,7 @@ public class AccountEdit extends Fragment {
                 String rEDemail = edEmail.getText().toString();
                 String rEDpone = edPhone.getText().toString();
 
-                Toast.makeText(getActivity(),rEDname,Toast.LENGTH_LONG).show();
+                //Toast.makeText(getActivity(),rEDname,Toast.LENGTH_LONG).show();
                 new updCusData(cusUID,rEDname,rEDemail,rEDpone).execute();
             }
         });
@@ -206,7 +209,7 @@ public class AccountEdit extends Fragment {
             @Override
             protected String doInBackground(String... params) {
                 DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
-                HttpPost httppost = new HttpPost("http://lokas.co.in/ngoapp/customer_edit.php/?id="+cusUID);
+                HttpPost httppost = new HttpPost("http://lokas.in/ngoapp/customer_edit.php/?id="+cusUID);
 
                 // Depends on your web service
                 httppost.setHeader("Content-type", "application/json");

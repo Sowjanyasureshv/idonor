@@ -1,12 +1,12 @@
 package com.lokas.idonor;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -29,6 +29,8 @@ public class MapShown extends ActionBarActivity implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        MapShown.this.setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarm);
         setSupportActionBar(toolbar);
@@ -46,15 +48,15 @@ public class MapShown extends ActionBarActivity implements OnMapReadyCallback {
         Double Lat = Double.valueOf(dirIntent.getStringExtra("latitude"));
         Double Long = Double.valueOf(dirIntent.getStringExtra("longitude"));
 
-        Toast.makeText(getApplicationContext(),"Direction"+Lat+","+Long,Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),"Direction"+Lat+","+Long,Toast.LENGTH_LONG).show();
 
         mMap = googleMap;
 
         // Add a marker in Sydney, Australia, and move the camera.
         LatLng sydney = new LatLng(Lat,Long);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+        mMap.addMarker(new MarkerOptions().position(sydney).title("NGO Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(18));
     }
 
     @Override

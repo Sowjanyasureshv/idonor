@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,10 +19,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -48,7 +47,6 @@ import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -69,11 +67,12 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
     private EditText email;
     private EditText phone;
     private EditText pwd,cpwd;
-    private Spinner role;
+    //private Spinner role;
     private Button btnSignup,btnFb;
     static final Integer LOCATION = 0x1;
 
     MyAsyncTaskL  MY = null;
+    static Context ctx;
 
     DataBaseHelper myDbHelper;
     ArrayList<String> CUSTOMER_LIST = new ArrayList<String>();
@@ -104,19 +103,20 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register);
-
+        Register.this.setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         manager = new SessionManager();
         String status=manager.getPreferences(Register.this,"tkID");
         Log.d("status", status);
         final String custkid= status;
-        Toast.makeText(getApplicationContext(),custkid, Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext(),custkid, Toast.LENGTH_LONG).show();
 
         name = (EditText) findViewById(R.id.reg_name);
         email = (EditText) findViewById(R.id.reg_email);
         phone = (EditText) findViewById(R.id.reg_pone);
         pwd = (EditText) findViewById(R.id.reg_pwd);
         cpwd = (EditText) findViewById(R.id.reg_cpwd);
-        role = (Spinner) findViewById(R.id.reg_role);
+        //role = (Spinner) findViewById(R.id.reg_role);
 
 
         btnSignup = (Button) findViewById(R.id.signup);
@@ -190,7 +190,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                 longitude = gps.getLongitude();
 
                 // \n is for new line
-                Toast.makeText(getApplicationContext(), "Your Location is1 - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(), "Your Location is1 - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
             }else{
                 // can't get location
                 // GPS or Network is not enabled
@@ -201,7 +201,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
 
 
 
-        // Spinner click listener
+        /*// Spinner click listener
         role.setOnItemSelectedListener(Register.this);
 
         // Spinner Drop down elements
@@ -217,7 +217,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // attaching data adapter to spinner
-        role.setAdapter(dataAdapter);
+        role.setAdapter(dataAdapter);*/
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,9 +228,10 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                 String rpone = phone.getText().toString().trim().toLowerCase();
                 String rpwd = pwd.getText().toString().trim().toLowerCase();
                 String rcpwd = cpwd.getText().toString().trim().toLowerCase();
-                String rrole = role.getSelectedItem().toString();
+                //String rrole = role.getSelectedItem().toString();
+                String rrole = "Non-NGO";
 
-                //Toast.makeText(getApplicationContext(),rrole,Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(),rrole,Toast.LENGTH_LONG).show();
                 //ask(view);
                 if(!gps.canGetLocation()){
                     // can't get location
@@ -262,10 +263,10 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                 }else if((rpwd.length())<8 ) {
                     pwd.setError("Password should be atleast of 8 charactors");
                     pwd.requestFocus();
-                } else if(rrole.trim().equals("Select a Role")){
+                }/* else if(rrole.trim().equals("Select a Role")){
                     Toast.makeText(getApplicationContext(),"Please Select a role",Toast.LENGTH_LONG).show();
                     role.requestFocus();
-            }else{
+            }*/else{
                     double latitude = 0;
                     double longitude = 0;
                     // create class object
@@ -278,7 +279,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                         longitude = gps.getLongitude();
 
                         // \n is for new line
-                        Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+                       // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
                     }else{
                         // can't get location
                         // GPS or Network is not enabled
@@ -325,13 +326,13 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
         return result.toString();
     }
 
-    @Override
+
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // On selecting a spinner item
         String item = parent.getItemAtPosition(position).toString();
 
         // Showing selected spinner item
-        Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+       // Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
 
     }
 
@@ -339,6 +340,8 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+
 
     private class Signup extends AsyncTask<Void,Void,String> {
 
@@ -381,7 +384,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
             String value1 = "";	 String encodedURL="";
             //String url_select = "http://182.18.160.121/IbharAppointment/api/APLOCAs";
 
-            String url_select ="http://lokas.co.in/ngoapp/customer_insert.php";
+            String url_select ="http://lokas.in/ngoapp/customer_insert.php";
 
 
 
@@ -845,19 +848,19 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
 
     class MyAsyncTaskL extends AsyncTask<String,String,Void> {
 
-        private ProgressDialog progressDialog = new ProgressDialog(getApplicationContext());
+        //private ProgressDialog progressDialog = new ProgressDialog(ctx);
         InputStream inputStream = null;
         String result = "";
         String result1 = "";
 
         protected void onPreExecute() {
-            progressDialog.setMessage("Refreshing  data...");
+           /* progressDialog.setMessage("Refreshing  data...");
             //progressDialog.show();
             progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 public void onCancel(DialogInterface arg0) {
                     MyAsyncTaskL.this.cancel(true);
                 }
-            });
+            });*/
 
             //PB.setVisibility(View.VISIBLE);
         }
@@ -872,7 +875,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
 
 
 
-            url_select = "http://lokas.co.in/ngoapp/customer_get.php";
+            url_select = "http://lokas.in/ngoapp/customer_get.php";
 
 
 
@@ -1001,14 +1004,6 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
             {
 
             }
-            return Ret;
-        }
-
-
-
-
-        protected void onPostExecute(Void v) {
-            //parse JSON data
 
 
             try {
@@ -1125,16 +1120,25 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
             } catch (Exception e) {
                 String error = e.toString().trim();
 
-                dh.Toastinfo(getApplicationContext(), error);
+                //dh.Toastinfo(ctx, error);
             }
-
-
+            return Ret;
         }
 
 
 
 
+        protected void onPostExecute(Void v) {
+            //parse JSON data
+
+
+
+
+
+        }
+
     }
+
 
 
 }

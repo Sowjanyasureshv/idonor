@@ -9,7 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Bitmap;
@@ -22,13 +22,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +64,7 @@ public class UploadProducts extends Fragment {
     //public Button selectImage,uploadImage,selectCamera;
     private Button uploadImage;
     private ImageButton selectImage,selectCamera;
-    public String SERVER = "http://lokas.co.in/ngoapp/image_upload2.php", timestamp;
+    public String SERVER = "http://lokas.in/ngoapp/image_upload2.php", timestamp;
 
     private EditText proTitle,proDesc;
     private Spinner cateSpin,prodSpin;
@@ -85,6 +86,8 @@ public class UploadProducts extends Fragment {
     private static final String TAG = UploadProducts.class.getSimpleName();
 
     private static final int RESULT_SELECT_IMAGE = 1;
+    private static final int CAMERA_PERMISSION_REQUEST = 3;
+    private static final int WRITE_PERMISSION_REQUEST = 4;
 
 
     ArrayList<String> CAT_List = new ArrayList<String>();
@@ -100,20 +103,10 @@ public class UploadProducts extends Fragment {
     DataHelper1 dh;
     DataBaseHelper myDbHelper;
 
-    static final Integer LOCATION = 0x1;
-    static final Integer CALL = 0x2;
-    static final Integer WRITE_EXST = 0x3;
-    static final Integer READ_EXST = 0x4;
-    static final Integer CAMERA = 0x5;
-    static final Integer ACCOUNTS = 0x6;
-    static final Integer GPS_SETTINGS = 0x7;
-
-    public final static int PERM_REQUEST_CODE_DRAW_OVERLAYS = 1234;
-    private static final int REQUEST_APP_SETTINGS = 168;
-
     public UploadProducts() {
         // Required empty public constructor
     }
+
 
 
     @Override
@@ -122,6 +115,8 @@ public class UploadProducts extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_upload_products, container, false);
         (getActivity()).setTitle("Upload Product");
+        getActivity().setRequestedOrientation(
+                ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         myDbHelper = new DataBaseHelper(getActivity());
 
@@ -153,19 +148,19 @@ public class UploadProducts extends Fragment {
 
         proTitle = (EditText) view.findViewById(R.id.pro_title);
         proDesc = (EditText) view.findViewById(R.id.pro_desc);
-        cateSpin = (Spinner) view.findViewById(R.id.cat_spinner);
-        prodSpin =(Spinner) view.findViewById(R.id.prod_spinner);
+        //cateSpin = (Spinner) view.findViewById(R.id.cat_spinner);
+       // prodSpin =(Spinner) view.findViewById(R.id.prod_spinner);
 
         //lnrImages = (LinearLayout)view.findViewById(R.id.lnrImages);
 
         manager = new SessionManager();
         String result=manager.getPreferences(getActivity(),"cusID");
         final String cusUID= result.replaceAll("[^a-zA-Z0-9]+","");
-        Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
 
         List<String> fgg = myDbHelper.getAllLabelsPc();
 
-        setupSpinnerListeners();
+        //setupSpinnerListeners();
 
         if (!isNetworkAvailable()){
             //Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
@@ -198,9 +193,7 @@ public class UploadProducts extends Fragment {
                 //call the function to select image from album
                 // selectImage();
                 //define the file-name to save photo taken by Camera activity
-//                clickpic();
-               ask(v);
-                //permissionToDrawOverlays();
+                clickpic(true);
             }
         });
 
@@ -209,10 +202,7 @@ public class UploadProducts extends Fragment {
             @Override
             public void onClick(View v) {
                 //call the function to select image from album
-//                selectImage();
-
-                ask(v);
-
+                selectImage();
                 /*AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(getContext());
                 myAlertDialog.setTitle("Pictures Option");
                 myAlertDialog.setMessage("Select Picture Mode");
@@ -247,20 +237,19 @@ public class UploadProducts extends Fragment {
         final List<String> categories = myDbHelper.getAllLabels();
         List<String> prrf = myDbHelper.getAllLabelsP();
 
-        /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            int hasLocationPermission = getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            Log.d(TAG, "location permission: " + hasLocationPermission); // 0
+        setOnClick("1", "1");
 
-            if (hasLocationPermission != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+        FragmentManager fm = getFragmentManager();
+        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if(getFragmentManager().getBackStackEntryCount() == 0){
+                    Toast.makeText(getActivity(), cusUID, Toast.LENGTH_LONG).show();
+                    getActivity().finish();
+                }
             }
-            hasLocationPermission = getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            Log.d(TAG, "location permission12: " + hasLocationPermission); // still 0
-
-        }*/
-
-
-
+        });
         return view;
     }
 
@@ -396,8 +385,8 @@ public class UploadProducts extends Fragment {
                 String ProdTitle = proTitle.getText().toString();
                 String ProdDesc = proDesc.getText().toString();
                 //String Category = cateSpin.getSelectedItem().toString();
-               // String Product = prodSpin.getSelectedItem().toString();
-
+                // String Product = prodSpin.getSelectedItem().toString();
+                Log.d("values of image",image+""+timestamp);
 
                 if (ProdTitle.length() == 0) {
                     proTitle.setError("Product Title is required");
@@ -405,10 +394,13 @@ public class UploadProducts extends Fragment {
                 } else if (ProdDesc.length() == 0) {
                     proDesc.setError("Product Description is required");
                     proDesc.requestFocus();
+                } else if(timestamp == null){
+                    Toast.makeText(getActivity(),"Please Upload Your Product",Toast.LENGTH_LONG).show();
+
                 } else {
                     //execute the async task and upload the image to server
-                    new Upload(image, "IMG_" + timestamp, ProdTitle, ProdDesc, finalCategory, Product, cusUID).execute();
-                    //new Upload(image, "IMG_" + timestamp, ProdTitle, ProdDesc, Category, Product, cusUID).execute();
+                    //new Upload(image, "IMG_" + timestamp, ProdTitle, ProdDesc, finalCategory, Product, cusUID).execute();
+                    new Upload(image, "IMG_" + timestamp, ProdTitle, ProdDesc, "1", "1", cusUID).execute();
                 }
             }
         });
@@ -420,28 +412,56 @@ public class UploadProducts extends Fragment {
     private void selectImage(){
         //open album to select image
         Intent gallaryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
         startActivityForResult(gallaryIntent, RESULT_SELECT_IMAGE);
     }
 
-    private void clickpic() {
-        // Check Ca
-            // Open default camera
-            Intent cameraintent = new Intent(
-                    MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraintent, 101);
-    }
+    private void triggerCameraEvent() {
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getActivity().getPackageManager()) != null) {
 
-
-    public void permissionToDrawOverlays() {
-        if (android.os.Build.VERSION.SDK_INT >= 23) {   //Android M Or Over
-            if (!Settings.canDrawOverlays(getActivity())) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getActivity().getPackageName()));
-                startActivityForResult(intent, PERM_REQUEST_CODE_DRAW_OVERLAYS);
-            }
+            startActivityForResult(cameraIntent, 101);
+        } else {
+            Log.e("UploadProducts", "No camera intent possible");
         }
     }
 
+    private void clickpic(boolean requestPermissions) {
+        final int PERMISSION_GRANTED = getActivity().getPackageManager().PERMISSION_GRANTED;
+        int cameraPermissions = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA);
+        int writePermissions = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
+        if (cameraPermissions == PERMISSION_GRANTED &&
+                writePermissions == PERMISSION_GRANTED) {
+            triggerCameraEvent();
+        }
+
+        if (requestPermissions && cameraPermissions != PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA},
+                    CAMERA_PERMISSION_REQUEST);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        final int PERMISSION_GRANTED = getActivity().getPackageManager().PERMISSION_GRANTED;
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if (grantResults[0] == getActivity().getPackageManager().PERMISSION_GRANTED) {
+                int writePermissions = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                if (writePermissions != PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            WRITE_PERMISSION_REQUEST);
+                }
+            }
+        }
+        if (requestCode == WRITE_PERMISSION_REQUEST) {
+            if (grantResults[0] == getActivity().getPackageManager().PERMISSION_GRANTED) {
+                // Now user should be able to use camera
+                clickpic(false);
+            }
+        }
+    }
 
     /*
     * This function is called when we pick some image from the album
@@ -452,17 +472,8 @@ public class UploadProducts extends Fragment {
         String filePath = null;
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PERM_REQUEST_CODE_DRAW_OVERLAYS) {
-            if (android.os.Build.VERSION.SDK_INT >= 23) {   //Android M Or Over
-                if (!Settings.canDrawOverlays(getActivity())) {
-                    // ADD UI FOR USER TO KNOW THAT UI for SYSTEM_ALERT_WINDOW permission was not granted earlier...
-
-                }
-            }
-        }
-
         if (requestCode == RESULT_SELECT_IMAGE && resultCode == Activity.RESULT_OK && data != null){
-           //set the selected image to image variable
+            //set the selected image to image variable
             Uri image = data.getData();
             imageView.setImageURI(image);
 
@@ -470,7 +481,7 @@ public class UploadProducts extends Fragment {
             Long tsLong = System.currentTimeMillis() / 1000;
             timestamp = tsLong.toString();
 
-            Toast.makeText(getActivity(),timestamp,Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getActivity(),timestamp,Toast.LENGTH_SHORT).show();
         }else if(requestCode == 101 && resultCode == Activity.RESULT_OK && data != null){
             /*selectedImage = data.getData();
             Log.d(TAG, "Media Uri: " + selectedImage);
@@ -645,7 +656,7 @@ public class UploadProducts extends Fragment {
             if (dialog.isShowing())
                 dialog.dismiss();
             System.out.println("return value"+ s);
-                //Toast.makeText(getActivity(),s,Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(),s,Toast.LENGTH_SHORT).show();
             // show image uploaded
             String Datas = s.trim();
             if(Datas.equals("1")){
@@ -726,120 +737,42 @@ public class UploadProducts extends Fragment {
         }
         return false;
     }
-    private void askForPermission(String permission, Integer requestCode) {
-        if (ContextCompat.checkSelfPermission(getActivity(), permission) != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permission)) {
+    /*boolean doubleBackToExitPressedOnce = false;
 
-                //This is called if user has denied the permission before
-                //In this case I am just asking the permission again
-                ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, requestCode);
 
-            } else {
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            getActivity().onBackPressed();
+            return;
+        }
 
-                ActivityCompat.requestPermissions(getActivity(), new String[]{permission}, requestCode);
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(getActivity(), "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+        getActivity().moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
             }
-        } else {
-            Toast.makeText(getActivity(), "" + permission + " is already granted.", Toast.LENGTH_SHORT).show();
-            onRequestPermissionsResult(requestCode,new String[]{permission}, new int[]{1});
-        }
-    }
-
-    public void ask(View v){
-        switch (v.getId()){
-           /* case R.id.location:
-                askForPermission(Manifest.permission.ACCESS_FINE_LOCATION,LOCATION);
-                break;
-            case R.id.call:
-                askForPermission(Manifest.permission.CALL_PHONE,CALL);
-                break;
-            case R.id.selectImage:
-                askForPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,WRITE_EXST);
-                break;*/
-            case R.id.selectImage:
-                askForPermission(Manifest.permission.READ_EXTERNAL_STORAGE,READ_EXST);
-
-                break;
-            case R.id.selectCamera:
-                askForPermission(Manifest.permission.CAMERA,CAMERA);
-                break;
-            /*case R.id.accounts:
-                askForPermission(Manifest.permission.GET_ACCOUNTS,ACCOUNTS);
-                break;*/
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.d("requestcode", String.valueOf(requestCode));
-        if(ActivityCompat.checkSelfPermission(getActivity(), permissions[0]) == PackageManager.PERMISSION_GRANTED){
-            switch (requestCode) {
-                //camera
-               //Location
-                case 1:
-                    /*askForGPS();*/
-                    break;
-                //Call
-                case 2:
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + "{This is a telephone number}"));
-                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        startActivity(callIntent);
-                    }
-                    break;
-                //Write external Storage
-                case 3:
-                    break;
-                //Read External Storage
-                case 4:
-                    selectImage();
-                    break;
-                //Camera
-                case 5:
-                    clickpic();
-                   /* Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                        startActivityForResult(takePictureIntent, 12);
-                    }*/
-                    break;
-                //Accounts
-                case 6:
-                   /* AccountManager manager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-                    Account[] list = manager.getAccounts();
-                    Toast.makeText(this,""+list[0].name,Toast.LENGTH_SHORT).show();
-                    for(int i=0; i<list.length;i++){
-                        Log.e("Account "+i,""+list[i].name);
-                    }*/
-            }
-            //Toast.makeText(getContext(), (requestCode), Toast.LENGTH_SHORT).show();
-            Toast.makeText(getContext(), "Permission granted", Toast.LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-   /*  public void permissionToDrawOverlays() {
-        if (android.os.Build.VERSION.SDK_INT >= 23) {   //Android M Or Over
-            if (!Settings.canDrawOverlays(getActivity())) {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getActivity().getPackageName()));
-                startActivityForResult(intent, PERM_REQUEST_CODE_DRAW_OVERLAYS);
-            }
-        }
-    }
-
-   @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PERM_REQUEST_CODE_DRAW_OVERLAYS) {
-            if (android.os.Build.VERSION.SDK_INT >= 23) {   //Android M Or Over
-                if (!Settings.canDrawOverlays(this)) {
-                    // ADD UI FOR USER TO KNOW THAT UI for SYSTEM_ALERT_WINDOW permission was not granted earlier...
-                }
-            }
-        }
+        }, 2000);
     }*/
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                String cameback="CameBack";
+                Toast.makeText(getActivity(), "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+                /*intent = new Intent(getActivity(),HomeActivity.class);
+                intent.putExtra("Comingback", cameback);
+                startActivity(intent);*/
+                return true;
+        }
+        return false;
+    }
 
 }

@@ -100,4 +100,13 @@
         <item name="android:textColorHint">@color/colorTextStyle</item>
     </style>
 
+
+    <style name="Dialog" parent="android:style/Theme.Dialog">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
 </resources>
