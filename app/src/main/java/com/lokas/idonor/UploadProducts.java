@@ -240,7 +240,7 @@ public class UploadProducts extends Fragment {
         setOnClick("1", "1");
 
 
-        FragmentManager fm = getFragmentManager();
+     /*   FragmentManager fm = getFragmentManager();
         fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
@@ -249,7 +249,7 @@ public class UploadProducts extends Fragment {
                     getActivity().finish();
                 }
             }
-        });
+        });*/
         return view;
     }
 

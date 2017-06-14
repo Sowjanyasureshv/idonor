@@ -543,7 +543,7 @@ public class ProductCloseDonor extends Fragment {
             String str2 = String.valueOf(PRDS_desc);
             str2 = str2.replaceAll("\\[", "").replaceAll("\\]","");
             Log.d("det", str1);
-            Picasso.with(getActivity()).load("http://lokas.co.in/ngoapp/productImage/"+str1).placeholder(R.drawable.placeholderone).error(R.drawable.placeholderone).into(holder.primg);
+            Picasso.with(getActivity()).load("http://lokas.in/ngoapp/productImage/"+str1).placeholder(R.drawable.placeholderone).error(R.drawable.placeholderone).into(holder.primg);
             //new DownloadImageTask(holder.primg).execute("http://lokas.co.in/ngoapp/productImage/"+str1);
             holder.Pname.setAllCaps(true);
             holder.Pname.setText(str);

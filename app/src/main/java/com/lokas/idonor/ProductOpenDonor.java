@@ -866,7 +866,7 @@ public class ProductOpenDonor extends Fragment {
                         //Toast.makeText(getActivity(), "test fb", Toast.LENGTH_LONG).show();
                         //Toast.makeText(getActivity(), ProdImg.get(getPosition()), Toast.LENGTH_LONG).show();
 
-                        ShareLinkContent linkContent = new ShareLinkContent.Builder().setContentTitle("Test").setContentDescription("Test Test")
+                        ShareLinkContent linkContent = new ShareLinkContent.Builder().setContentTitle("iDonor").setContentDescription(ProdTitle.get(getPosition()))
                                 .setContentUrl(Uri.parse("https://play.google.com/store/apps/details?id=com.lokas.idonor&hl=en"))
                                 .setImageUrl(Uri.parse("http://lokas.in/ngoapp/productImage/"+ProdImg.get(getPosition())))
                                 .build();

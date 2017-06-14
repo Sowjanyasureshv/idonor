@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         String status=manager.getPreferences(MainActivity.this,"tkID");
         Log.d("tknstatus", status);
         final String custkid= status;
-        Toast.makeText(getApplicationContext(),custkid, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(),custkid, Toast.LENGTH_LONG).show();
 
 
 
