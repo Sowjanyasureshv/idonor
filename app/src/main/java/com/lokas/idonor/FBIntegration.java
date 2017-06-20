@@ -111,7 +111,7 @@ public class FBIntegration extends AppCompatActivity {
         String status = manager.getPreferences(FBIntegration.this, "tkID");
         Log.d("status", status);
         custkid = status;
-        Toast.makeText(getApplicationContext(), custkid, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), custkid, Toast.LENGTH_LONG).show();
 
         myDbHelper = new DataBaseHelper(getApplicationContext());
 
@@ -150,7 +150,7 @@ public class FBIntegration extends AppCompatActivity {
             longitude = gps.getLongitude();
 
             // \n is for new line
-            Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
         } else {
             // can't get location
             // GPS or Network is not enabled

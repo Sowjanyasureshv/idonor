@@ -71,7 +71,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
     private Button btnSignup,btnFb;
     static final Integer LOCATION = 0x1;
 
-    MyAsyncTaskL  MY = null;
+    MyAsyncTaskREGDONOR  MYRDON = null;
     static Context ctx;
 
     DataBaseHelper myDbHelper;
@@ -89,6 +89,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
     ArrayList<String> ModiDate = new ArrayList<String>();
     ArrayList<String> Status = new ArrayList<String>();
     ArrayList<String> Flag = new ArrayList<String>();
+    ArrayList<String> NGOLink = new ArrayList<String>();
 
     private static final String TAG = Register.class.getSimpleName();
 
@@ -659,8 +660,8 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                 Toast.makeText(getApplicationContext(),"Phone number or email already exist",Toast.LENGTH_LONG).show();
             }else{
                 Toast.makeText(getApplicationContext(),"Successfully Registered",Toast.LENGTH_LONG).show();
-                MY= new MyAsyncTaskL();
-                MY.execute();
+                MYRDON= new MyAsyncTaskREGDONOR();
+                MYRDON.execute();
                 Intent loginIntent = new Intent(Register.this, MainActivity.class);
                 startActivity(loginIntent);
             }
@@ -812,9 +813,6 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
 
     public void ask(){
 
-
-
-
     }
     /*public void ask(View v){
         switch (v.getId()){
@@ -846,21 +844,21 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
     }
 
 
-    class MyAsyncTaskL extends AsyncTask<String,String,Void> {
+    class MyAsyncTaskREGDONOR extends AsyncTask<String,String,Void> {
 
-        //private ProgressDialog progressDialog = new ProgressDialog(ctx);
+        private ProgressDialog progressDialog = new ProgressDialog(getApplicationContext());
         InputStream inputStream = null;
         String result = "";
         String result1 = "";
 
         protected void onPreExecute() {
-           /* progressDialog.setMessage("Refreshing  data...");
+            progressDialog.setMessage("Refreshing  data...");
             //progressDialog.show();
             progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 public void onCancel(DialogInterface arg0) {
-                    MyAsyncTaskL.this.cancel(true);
+                    Register.MyAsyncTaskREGDONOR.this.cancel(true);
                 }
-            });*/
+            });
 
             //PB.setVisibility(View.VISIBLE);
         }
@@ -1004,6 +1002,14 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
             {
 
             }
+            return Ret;
+        }
+
+
+
+
+        protected void onPostExecute(Void v) {
+            //parse JSON data
 
 
             try {
@@ -1031,6 +1037,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                     String CICUSMODIIDATE = jObject.getString("modi_date");
                     String CICUSSTATUS = jObject.getString("status");
                     String CICUSFLAG = jObject.getString("flag");
+                    String CICUSNGOLINK = jObject.getString("ngo_link");
 
 
 
@@ -1040,8 +1047,8 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
 
                     dh.ExecStatement("DELETE FROM customer WHERE cus_id='" + CICUSID + "'");
 
-                    QUERY="INSERT INTO customer (cus_id,cus_userId,cus_name,cus_email,cus_phone,cus_pwd,cus_cpwd,cus_role,crtd_date,modi_date,status,flag) " + "VALUES " +
-                            "('"+CICUSID+"','"+CICUSUSERID+"','"+CICUSNAME+"','"+CICUSEMAIL+"','"+CICUSPHONE+"','"+CICUSPWD+"','"+CICUSCPWD+"','"+CICUSROLE+"','"+CICUSCRTDDATE+"','"+CICUSMODIIDATE+"','"+CICUSSTATUS+"','"+CICUSFLAG+"')";
+                    QUERY="INSERT INTO customer (cus_id,cus_userId,cus_name,cus_email,cus_phone,cus_pwd,cus_cpwd,cus_role,crtd_date,modi_date,status,flag,ngo_link) " + "VALUES " +
+                            "('"+CICUSID+"','"+CICUSUSERID+"','"+CICUSNAME+"','"+CICUSEMAIL+"','"+CICUSPHONE+"','"+CICUSPWD+"','"+CICUSCPWD+"','"+CICUSROLE+"','"+CICUSCRTDDATE+"','"+CICUSMODIIDATE+"','"+CICUSSTATUS+"','"+CICUSFLAG+"','"+CICUSNGOLINK+"')";
                     dh.ExecStatement(QUERY);
 
 
@@ -1082,6 +1089,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                 ModiDate.clear();
                 Status.clear();
                 Flag.clear();
+                NGOLink.clear();
 
                 /*CUSTOMER_LIST = dh
                         .selectList(
@@ -1089,7 +1097,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                                         + usercode + "' ORDER BY RLRNAM", null, 8);*/
                 CUSTOMER_LIST = dh
                         .selectList(
-                                "Select * from customer ORDER BY cus_id", null, 12);
+                                "Select * from customer ORDER BY cus_id", null, 13);
                 for (Iterator<String> i = CUSTOMER_LIST.iterator(); i.hasNext();) {
                     String rowValue = (String) i.next();
                     String[] parser = rowValue.split("%");
@@ -1107,6 +1115,7 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
                     ModiDate.add(parser[9].trim().replace("null", ""));
                     Status.add(parser[10].trim().replace("null", ""));
                     Flag.add(parser[11].trim().replace("null", ""));
+                    NGOLink.add(parser[12].trim().replace("null", ""));
 
                     /*String Date ="";
                     if(parser[7].trim().replace("null", "").length()==10)
@@ -1120,19 +1129,8 @@ public class Register extends Activity implements AdapterView.OnItemSelectedList
             } catch (Exception e) {
                 String error = e.toString().trim();
 
-                //dh.Toastinfo(ctx, error);
+                dh.Toastinfo(getApplicationContext(), error);
             }
-            return Ret;
-        }
-
-
-
-
-        protected void onPostExecute(Void v) {
-            //parse JSON data
-
-
-
 
 
         }
